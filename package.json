@@ -1,5 +1,5 @@
 {
-  "name": "swiper",
+  "name": "swiper-lite",
   "version": "4.3.5",
   "description": "Most modern mobile touch slider and framework with hardware accelerated transitions",
   "main": "dist/js/swiper.js",

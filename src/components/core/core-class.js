@@ -9,10 +9,10 @@ import translate from './translate/index';
 import transition from './transition/index';
 import slide from './slide/index';
 import loop from './loop/index';
-import grabCursor from './grab-cursor/index';
+// import grabCursor from './grab-cursor/index';
 import manipulation from './manipulation/index';
 import events from './events/index';
-import breakpoints from './breakpoints/index';
+// import breakpoints from './breakpoints/index';
 import classes from './classes/index';
 import images from './images/index';
 import checkOverflow from './check-overflow/index';
@@ -25,10 +25,10 @@ const prototypes = {
   transition,
   slide,
   loop,
-  grabCursor,
+  // grabCursor,
   manipulation,
   events,
-  breakpoints,
+  // breakpoints,
   checkOverflow,
   classes,
   images,
@@ -279,9 +279,9 @@ class Swiper extends SwiperClass {
     if (!swiper || swiper.destroyed) return;
     const { snapGrid, params } = swiper;
     // Breakpoints
-    if (params.breakpoints) {
-      swiper.setBreakpoint();
-    }
+    // if (params.breakpoints) {
+    //   swiper.setBreakpoint();
+    // }
     swiper.updateSize();
     swiper.updateSlides();
     swiper.updateProgress();
@@ -323,9 +323,9 @@ class Swiper extends SwiperClass {
     swiper.emit('beforeInit');
 
     // Set breakpoint
-    if (swiper.params.breakpoints) {
-      swiper.setBreakpoint();
-    }
+    // if (swiper.params.breakpoints) {
+    //   swiper.setBreakpoint();
+    // }
 
     // Add Classes
     swiper.addClasses();
@@ -346,9 +346,9 @@ class Swiper extends SwiperClass {
     }
 
     // Set Grab Cursor
-    if (swiper.params.grabCursor) {
-      swiper.setGrabCursor();
-    }
+    // if (swiper.params.grabCursor) {
+    //   swiper.setGrabCursor();
+    // }
 
     if (swiper.params.preloadImages) {
       swiper.preloadImages();
