@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: September 4, 2018
+ * Released on: September 5, 2018
  */
 
 (function (global, factory) {
@@ -3334,6 +3334,63 @@
 
   var classes = { addClasses: addClasses, removeClasses: removeClasses };
 
+  function loadImage (imageEl, src, srcset, sizes, checkForComplete, callback) {
+    var image;
+    function onReady() {
+      if (callback) { callback(); }
+    }
+    if (!imageEl.complete || !checkForComplete) {
+      if (src) {
+        image = new win.Image();
+        image.onload = onReady;
+        image.onerror = onReady;
+        if (sizes) {
+          image.sizes = sizes;
+        }
+        if (srcset) {
+          image.srcset = srcset;
+        }
+        if (src) {
+          image.src = src;
+        }
+      } else {
+        onReady();
+      }
+    } else {
+      // image already loaded...
+      onReady();
+    }
+  }
+
+  function preloadImages () {
+    var swiper = this;
+    swiper.imagesToLoad = swiper.$el.find('img');
+    function onReady() {
+      if (typeof swiper === 'undefined' || swiper === null || !swiper || swiper.destroyed) { return; }
+      if (swiper.imagesLoaded !== undefined) { swiper.imagesLoaded += 1; }
+      if (swiper.imagesLoaded === swiper.imagesToLoad.length) {
+        if (swiper.params.updateOnImagesReady) { swiper.update(); }
+        swiper.emit('imagesReady');
+      }
+    }
+    for (var i = 0; i < swiper.imagesToLoad.length; i += 1) {
+      var imageEl = swiper.imagesToLoad[i];
+      swiper.loadImage(
+        imageEl,
+        imageEl.currentSrc || imageEl.getAttribute('src'),
+        imageEl.srcset || imageEl.getAttribute('srcset'),
+        imageEl.sizes || imageEl.getAttribute('sizes'),
+        true,
+        onReady
+      );
+    }
+  }
+
+  var images = {
+    loadImage: loadImage,
+    preloadImages: preloadImages,
+  };
+
   function checkOverflow() {
     var swiper = this;
     var wasLocked = swiper.isLocked;
@@ -3492,7 +3549,7 @@
     // breakpoints,
     checkOverflow: checkOverflow$1,
     classes: classes,
-    // images,
+    images: images,
   };
 
   var extendedDefaults = {};
@@ -3824,9 +3881,9 @@
       //   swiper.setGrabCursor();
       // }
 
-      // if (swiper.params.preloadImages) {
-      //   swiper.preloadImages();
-      // }
+      if (swiper.params.preloadImages) {
+        swiper.preloadImages();
+      }
 
       // Slide To Initial Slide
       if (swiper.params.loop) {

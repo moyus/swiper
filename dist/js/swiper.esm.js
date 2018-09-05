@@ -7,7 +7,7 @@
  *
  * Released under the MIT License
  *
- * Released on: September 4, 2018
+ * Released on: September 5, 2018
  */
 
 import { $, addClass, removeClass, hasClass, toggleClass, attr, removeAttr, data, transform, transition, on, off, trigger, transitionEnd, outerWidth, outerHeight, offset, css, each, html, text, is, index, eq, append, prepend, next, nextAll, prev, prevAll, parent, parents, closest, find, children, remove, add, styles } from 'dom7/dist/dom7.modular';
@@ -2402,6 +2402,63 @@ function removeClasses () {
 
 var classes = { addClasses, removeClasses };
 
+function loadImage (imageEl, src, srcset, sizes, checkForComplete, callback) {
+  let image;
+  function onReady() {
+    if (callback) callback();
+  }
+  if (!imageEl.complete || !checkForComplete) {
+    if (src) {
+      image = new window.Image();
+      image.onload = onReady;
+      image.onerror = onReady;
+      if (sizes) {
+        image.sizes = sizes;
+      }
+      if (srcset) {
+        image.srcset = srcset;
+      }
+      if (src) {
+        image.src = src;
+      }
+    } else {
+      onReady();
+    }
+  } else {
+    // image already loaded...
+    onReady();
+  }
+}
+
+function preloadImages () {
+  const swiper = this;
+  swiper.imagesToLoad = swiper.$el.find('img');
+  function onReady() {
+    if (typeof swiper === 'undefined' || swiper === null || !swiper || swiper.destroyed) return;
+    if (swiper.imagesLoaded !== undefined) swiper.imagesLoaded += 1;
+    if (swiper.imagesLoaded === swiper.imagesToLoad.length) {
+      if (swiper.params.updateOnImagesReady) swiper.update();
+      swiper.emit('imagesReady');
+    }
+  }
+  for (let i = 0; i < swiper.imagesToLoad.length; i += 1) {
+    const imageEl = swiper.imagesToLoad[i];
+    swiper.loadImage(
+      imageEl,
+      imageEl.currentSrc || imageEl.getAttribute('src'),
+      imageEl.srcset || imageEl.getAttribute('srcset'),
+      imageEl.sizes || imageEl.getAttribute('sizes'),
+      true,
+      onReady
+    );
+  }
+}
+
+var images = {
+  loadImage,
+  preloadImages,
+};
+
 function checkOverflow() {
   const swiper = this;
   const wasLocked = swiper.isLocked;
@@ -2560,7 +2617,7 @@ const prototypes = {
   // breakpoints,
   checkOverflow: checkOverflow$1,
   classes,
-  // images,
+  images,
 };
 
 const extendedDefaults = {};
@@ -2879,9 +2936,9 @@ class Swiper extends SwiperClass {
     //   swiper.setGrabCursor();
     // }
 
-    // if (swiper.params.preloadImages) {
-    //   swiper.preloadImages();
-    // }
+    if (swiper.params.preloadImages) {
+      swiper.preloadImages();
+    }
 
     // Slide To Initial Slide
     if (swiper.params.loop) {
