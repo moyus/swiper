@@ -2,13 +2,18 @@ export default function (translate = (this && this.translate) || 0) {
   const swiper = this;
   const params = swiper.params;
 
-  const { slides, rtlTranslate: rtl } = swiper;
+  const { slides, rtlTranslate: rtl, swiperSize } = swiper;
 
   if (slides.length === 0) return;
   if (typeof slides[0].swiperSlideOffset === 'undefined') swiper.updateSlidesOffset();
 
   let offsetCenter = -translate;
   if (rtl) offsetCenter = translate;
+
+  let spaceBetween = params.spaceBetween;
+  if (typeof spaceBetween === 'string' && spaceBetween.indexOf('%') >= 0) {
+    spaceBetween = (parseFloat(spaceBetween.replace('%', '')) / 100) * swiperSize;
+  }
 
   // Visible Slides
   slides.removeClass(params.slideVisibleClass);
@@ -17,7 +22,7 @@ export default function (translate = (this && this.translate) || 0) {
     const slide = slides[i];
     const slideProgress = (
       (offsetCenter + (params.centeredSlides ? swiper.minTranslate() : 0)) - slide.swiperSlideOffset
-    ) / (slide.swiperSlideSize + params.spaceBetween);
+    ) / (slide.swiperSlideSize + spaceBetween);
     if (params.watchSlidesVisibility) {
       const slideBefore = -(offsetCenter - slide.swiperSlideOffset);
       const slideAfter = slideBefore + swiper.slidesSizesGrid[i];
